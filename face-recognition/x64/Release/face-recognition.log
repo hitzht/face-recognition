@@ -1,1 +1,70 @@
-﻿
+﻿  face_recognize_api.cpp
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/shape.h(54): warning C4267: “初始化”: 从“size_t”转换到“mxnet::cpp::index_t”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/executor.h(87): warning C4267: “参数”: 从“size_t”转换到“mx_uint”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/executor.hpp(85): warning C4267: “参数”: 从“size_t”转换到“mx_uint”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/symbol.hpp(96): warning C4267: “参数”: 从“size_t”转换到“mx_uint”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/symbol.hpp(132): warning C4267: “参数”: 从“size_t”转换到“mx_uint”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/symbol.hpp(134): warning C4267: “参数”: 从“size_t”转换到“mx_uint”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/symbol.hpp(195): warning C4267: “参数”: 从“size_t”转换到“unsigned int”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/symbol.hpp(200): warning C4267: “参数”: 从“size_t”转换到“unsigned int”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/symbol.hpp(219): warning C4267: “参数”: 从“size_t”转换到“mx_uint”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/ndarray.hpp(54): warning C4267: “参数”: 从“size_t”转换到“mx_uint”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/ndarray.hpp(365): warning C4267: “参数”: 从“size_t”转换到“mx_uint”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/ndarray.hpp(374): warning C4267: “参数”: 从“size_t”转换到“mx_uint”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/monitor.hpp(39): warning C4244: “参数”: 从“double”转换到“mx_float”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/operator.hpp(104): warning C4267: “参数”: 从“size_t”转换到“mx_uint”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/operator.hpp(106): warning C4267: “参数”: 从“size_t”转换到“mx_uint”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/operator.hpp(124): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/operator.hpp(125): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/operator.hpp(140): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/optimizer.hpp(189): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/optimizer.hpp(194): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/optimizer.hpp(248): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/optimizer.hpp(253): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/optimizer.hpp(320): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/optimizer.hpp(368): warning C4244: “初始化”: 从“unsigned int”转换到“float”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/optimizer.hpp(386): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/kvstore.hpp(105): warning C4267: “参数”: 从“size_t”转换到“mx_uint”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/kvstore.hpp(122): warning C4267: “参数”: 从“size_t”转换到“mx_uint”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/kvstore.hpp(146): warning C4267: “参数”: 从“size_t”转换到“mx_uint”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/kvstore.hpp(164): warning C4267: “参数”: 从“size_t”转换到“mx_uint”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/kvstore.hpp(189): warning C4267: “参数”: 从“size_t”转换到“mx_uint”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/kvstore.hpp(208): warning C4267: “参数”: 从“size_t”转换到“mx_uint”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/io.hpp(54): warning C4800: “int”: 将值强制为布尔值“true”或“false”(性能警告)
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/io.hpp(83): warning C4244: “参数”: 从“uint64_t”转换到“const int”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/io.hpp(98): warning C4267: “参数”: 从“size_t”转换到“mx_uint”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/metric.h(91): warning C4305: “初始化”: 从“double”到“float”截断
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/metric.h(100): warning C4244: “参数”: 从“float”转换到“unsigned __int64”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/initializer.h(79): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/initializer.h(80): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/initializer.h(171): warning C4267: “参数”: 从“size_t”转换到“mxnet::cpp::index_t”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/initializer.h(178): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/initializer.h(200): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+c:\programing\projects\c++\face-recognition\src\mtcnn.hpp(40): warning C4305: “=”: 从“double”到“float”截断
+c:\programing\projects\c++\face-recognition\src\mtcnn.hpp(41): warning C4305: “=”: 从“double”到“float”截断
+c:\programing\projects\c++\face-recognition\src\mtcnn.hpp(42): warning C4305: “=”: 从“double”到“float”截断
+c:\programing\projects\c++\face-recognition\src\mtcnn.hpp(56): warning C4244: “=”: 从“float”转换到“int”，可能丢失数据
+c:\programing\projects\c++\face-recognition\src\buffer_file.hpp(26): warning C4244: “=”: 从“std::streamoff”转换到“int”，可能丢失数据
+c:\programing\projects\c++\face-recognition\src\face_align.hpp(12): warning C4838: 从“double”转换到“float”需要收缩转换
+c:\programing\projects\c++\face-recognition\src\face_align.hpp(12): warning C4305: “初始化”: 从“double”到“float”截断
+c:\programing\projects\c++\face-recognition\src\face_align.hpp(114): warning C4244: “初始化”: 从“float”转换到“int”，可能丢失数据
+c:\programing\projects\c++\face-recognition\src\face_align.hpp(123): warning C4244: “=”: 从“int”转换到“float”，可能丢失数据
+c:\programing\projects\c++\face-recognition\src\face_align.hpp(132): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+c:\programing\projects\c++\face-recognition\src\face_align.hpp(135): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+c:\programing\projects\c++\face-recognition\src\recognizer.hpp(26): warning C4244: “初始化”: 从“std::streamoff”转换到“int”，可能丢失数据
+c:\programing\projects\c++\face-recognition\src\recognizer.hpp(47): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+c:\programing\projects\c++\face-recognition\src\recognizer.hpp(97): warning C4267: “参数”: 从“size_t”转换到“mx_uint”，可能丢失数据
+C:\programing\projects\c++\face-recognition\include\mxnet-cpp/shape.h(222): warning C4244: “参数”: 从“__int64”转换到“mxnet::cpp::index_t”，可能丢失数据
+  C:\programing\projects\c++\face-recognition\include\mxnet-cpp/shape.h(242): note: 参见对正在编译的函数 模板 实例化“void mxnet::cpp::Shape::CopyFrom<std::_Vector_const_iterator<std::_Vector_val<std::_Simple_types<unsigned int>>>>(RandomAccessIterator,RandomAccessIterator)”的引用
+          with
+          [
+              RandomAccessIterator=std::_Vector_const_iterator<std::_Vector_val<std::_Simple_types<unsigned int>>>
+          ]
+    正在创建库 C:\programing\projects\c++\face-recognition\x64\Release\face-recognition.lib 和对象 C:\programing\projects\c++\face-recognition\x64\Release\face-recognition.exp
+  正在生成代码
+  48 of 1074 functions ( 4.5%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    9 functions had inline decision re-evaluated but remain unchanged
+  已完成代码的生成
+  face-recognition.vcxproj -> C:\programing\projects\c++\face-recognition\x64\Release\face-recognition.dll
+  face-recognition.vcxproj -> C:\programing\projects\c++\face-recognition\x64\Release\face-recognition.pdb (Full PDB)

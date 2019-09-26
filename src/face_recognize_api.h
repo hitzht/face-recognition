@@ -24,6 +24,14 @@ extern "C" {
 
 	/*
 		distance < 1:same person or not
+		base/target:face features
 	*/
 	LIB_API char*  computeDistance(char* base,char* target);
+
+	/*
+		detected = 0:normal image file that includes faces
+		detected = 1:face image that only includes single face
+		base/target:image path
+	*/
+	LIB_API char*  computeDistanceByFile(char* base_src, char* target_src, int detected);
 }
