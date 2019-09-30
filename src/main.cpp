@@ -9,8 +9,9 @@ using namespace std;
 
 extern void test(char*, char*);
 int main(int argc, char* argv[]) {
-	loadModel("../../model/mtcnn_model", "../../model/feature_model/128/model-0000.params", "../../model/feature_model/128/model-symbol.json");
-	test(argv[1],argv[2]);
+	int status = loadModel("../../model/mtcnn_model", "../../model/feature_model/128/model-0000.params", "../../model/feature_model/128/model-symbol.json");
+	std::cout << status;
+	//test(argv[1],argv[2]);
 	cv::waitKey();
 	return 0;
 }

@@ -45,13 +45,14 @@ class Recognizer{
 			const mx_uint input_shape_data[] = {static_cast<mx_uint>(batch),static_cast<mx_uint>(channel),static_cast<mx_uint>(input_h),static_cast<mx_uint>(input_w)};
 			input_keys[0] = "data";
 			int ret = MXPredCreate(json_buffer.data(),param_buffer.data(),param_buffer.size(),device_type,dev_id,num_input_nodes,input_keys,input_shape_indptr,input_shape_data,&pred_feature);
-			return ret;
+			return ret == 0 ? 1 : -1;
 		}
 		int loadModel(std::string mtcnn_model, std::string params, std::string json) {
-
 			int mtcnn_status = mtcnn.LoadModule(mtcnn_model);
 			int extract_status = LoadExtractModule(params,json,1, 3, 112, 112);
-			return mtcnn_status - extract_status + 1;
+			if (mtcnn_status == 1 && extract_status == 1)
+				return 1;
+			return -1;
 		}
 		std::vector<cv::Mat> createAlignFace(cv::Mat& img) {
 			std::vector<cv::Mat> aligned_faces;
