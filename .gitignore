@@ -31,3 +31,8 @@
 *.out
 *.app
 /x64/Release
+/*.opendb
+/.vs
+/face-recognition
+/*.db
+/x64
