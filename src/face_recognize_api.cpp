@@ -123,9 +123,6 @@ char* computeDistanceByMat(Mat& base, Mat& target,int detected) {
 			Mat base_emb = recognizer.extractFeature(base_vector[0]);
 			Mat target_emb = recognizer.extractFeature(target_vector[0]);
 			distance = recognizer.distance(base_emb, target_emb);
-			std::cout << base_emb << std::endl;
-			std::cout << target_emb << std::endl;
-
 			
 			cv::transpose(target_emb, target_emb);
 			double sim = base_emb.dot(target_emb);
