@@ -298,6 +298,10 @@ void test(char* base_src, char* target_src) {
 	//char* Base64_features = extractFaceFeatureByBase64(str.c_str());
 	//std::cout << "Base64_features:" << Base64_features << std::endl;
 	*/
-	//char* result = computeDistanceByFile(base_src, target_src, 1);
-	//std::cout << result << std::endl;
+	while (true) {
+		char* result = computeDistanceByFile(base_src, target_src, 1);
+		std::cout << result << std::endl;
+		waitKey(500);
+	}
+	
 }
