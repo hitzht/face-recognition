@@ -9,6 +9,7 @@ email:jiaopaner@163.com
 #include "recognizer.hpp"
 #include "cJSON.h"
 #include "utils.hpp"
+#include <time.h>
 
 using namespace cv;
 
@@ -126,6 +127,10 @@ char* computeDistanceByMat(Mat& base, Mat& target,int detected) {
 			
 			cv::transpose(target_emb, target_emb);
 			double sim = base_emb.dot(target_emb);
+			if (sim < 0)
+				sim = 0;
+			if (sim > 100)
+				sim = 100;
 			
 		//}
 		cJSON_AddNumberToObject(result, "status", 1);
@@ -198,7 +203,7 @@ LIB_API char * extractFaceFeatureByByte(unsigned char * src, int width, int heig
 	//}
 }
 
-LIB_API char*  extractFaceFeatureByBase64(char* base64_data, int detected = 0) {
+LIB_API char*  extractFaceFeatureByBase64(const char* base64_data, int detected = 0) {
 	std::string data(base64_data);
 	Mat image = Utils::base64ToMat(data);
 	//if (detected == 1) {
@@ -219,6 +224,10 @@ LIB_API char * computeDistance(char * base_emb, char * target_emb){
 		double distance = recognizer.distance(baseMat, targetMat);
 		cv::transpose(targetMat, targetMat);
 		double sim = baseMat.dot(targetMat);
+		if (sim < 0)
+			sim = 0;
+		if (sim > 100)
+			sim = 100;
 		cJSON_AddNumberToObject(result, "status", 1);
 		cJSON_AddStringToObject(result, "msg", "compute success");
 		cJSON_AddNumberToObject(result, "distance", distance);
@@ -298,10 +307,18 @@ void test(char* base_src, char* target_src) {
 	//char* Base64_features = extractFaceFeatureByBase64(str.c_str());
 	//std::cout << "Base64_features:" << Base64_features << std::endl;
 	*/
-	while (true) {
-		char* result = computeDistanceByFile(base_src, target_src, 1);
-		std::cout << result << std::endl;
-		waitKey(500);
-	}
+	
+	clock_t start, ends;
+	/*start = clock();
+	char* result = extractFaceFeatureByFile(base_src);
+	std::cout << result << std::endl;
+	ends = clock();
+	std::cout << "register time:" << ends - start << "ms" << std::endl;*/
+
+	start = clock();
+	char* Base64_features = computeDistanceByFile(base_src,target_src);
+	std::cout << "result:" << Base64_features << std::endl;
+	ends = clock();
+	std::cout << "result time:" << ends - start << "ms" << std::endl;
 	
 }
