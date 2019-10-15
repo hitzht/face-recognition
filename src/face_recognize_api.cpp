@@ -115,7 +115,7 @@ char* computeDistanceByMat(Mat& base, Mat& target,int detected) {
 
 			if ((base_vector.empty() || target_vector.empty()) || (base_vector.size() > 1 || target_vector.size() > 1)) {
 				cJSON_AddNumberToObject(result, "status", -1);
-				cJSON_AddStringToObject(result, "msg", "compute failed,one image has no face or has more than one face");
+				cJSON_AddStringToObject(result, "msg", "compute failed,one of images has no face or has more than one face");
 				cJSON_AddNumberToObject(result, "distance", -1);
 				cJSON_AddNumberToObject(result, "sim", 0);
 				resultJson = cJSON_PrintUnformatted(result);
@@ -168,7 +168,20 @@ LIB_API int loadModel(char* mtcnn_model,char* insightface_params,char * insightf
 }
 
 LIB_API char * extractFaceFeatureByFile(char * src, int detected = 0){
-	Mat image = imread(src);
+	cJSON  *result = cJSON_CreateObject(), *embeddings = cJSON_CreateArray();
+	char *resultJson;
+	Mat image;
+	try{
+		image = imread(src);
+	}
+	catch (const std::exception&){
+		cJSON_AddNumberToObject(result, "status", -1);
+		cJSON_AddStringToObject(result, "msg", "register failed,can not load file");
+		cJSON_AddItemToObject(result, "embeddings", embeddings);
+		resultJson = cJSON_PrintUnformatted(result);
+		return resultJson;
+	}
+	
 
 //	if (detected == 1) {
 //		return extractFaceFeature(image); // todo face aligned
@@ -203,9 +216,21 @@ LIB_API char * extractFaceFeatureByByte(unsigned char * src, int width, int heig
 	//}
 }
 
-LIB_API char*  extractFaceFeatureByBase64(const char* base64_data, int detected = 0) {
+LIB_API char*  extractFaceFeatureByBase64(char* base64_data, int detected = 0) {
 	std::string data(base64_data);
-	Mat image = Utils::base64ToMat(data);
+	cJSON  *result = cJSON_CreateObject(), *embeddings = cJSON_CreateArray();
+	char *resultJson;
+	Mat image;
+	try {
+		image = Utils::base64ToMat(data);
+	}
+	catch (const std::exception&) {
+		cJSON_AddNumberToObject(result, "status", -1);
+		cJSON_AddStringToObject(result, "msg", "register failed,can not convert base64 to Mat");
+		cJSON_AddItemToObject(result, "embeddings", embeddings);
+		resultJson = cJSON_PrintUnformatted(result);
+		return resultJson;
+	}
 	//if (detected == 1) {
 	//	return extractFaceFeature(image);// todo face aligned
 	//}
@@ -246,14 +271,44 @@ LIB_API char * computeDistance(char * base_emb, char * target_emb){
 
 }
 LIB_API char * computeDistanceByFile(char * base_src, char * target_src, int detected = 0){
-	Mat base = imread(base_src);
-	Mat target = imread(target_src);	
-	return computeDistanceByMat(base,target,detected);
+	cJSON  *result = cJSON_CreateObject();
+	char *resultJson;
+	Mat base,target;
+	try{
+		base = imread(base_src);
+		target = imread(target_src);
+	}
+	catch (const std::exception&){
+		cJSON_AddNumberToObject(result, "status", -1);
+		cJSON_AddStringToObject(result, "msg", "can not load file");
+		cJSON_AddNumberToObject(result, "distance", -1);
+		cJSON_AddNumberToObject(result, "sim", 0);
+		resultJson = cJSON_PrintUnformatted(result);
+		return resultJson;
+	}
+	return computeDistanceByMat(base, target, detected);
+	
+	
 }
 LIB_API char*  computeDistanceByBase64(char* base_data,char* target_data, int detected = 0) {
 	std::string base_str(base_data);
 	std::string target_str(target_data);
-	return computeDistanceByMat(Utils::base64ToMat(base_str), Utils::base64ToMat(target_str), detected);
+	cJSON  *result = cJSON_CreateObject();
+	char *resultJson;
+	Mat base, target;
+	try {
+		base = Utils::base64ToMat(base_str);
+		target = Utils::base64ToMat(target_str);
+	}
+	catch (const std::exception&) {
+		cJSON_AddNumberToObject(result, "status", -1);
+		cJSON_AddStringToObject(result, "msg", "can not convert base64");
+		cJSON_AddNumberToObject(result, "distance", -1);
+		cJSON_AddNumberToObject(result, "sim", 0);
+		resultJson = cJSON_PrintUnformatted(result);
+		return resultJson;
+	}
+	return computeDistanceByMat(base, target, detected);
 }
 
 /*----------------------------------------------------------------------------------------------*/
@@ -309,15 +364,8 @@ void test(char* base_src, char* target_src) {
 	*/
 	
 	clock_t start, ends;
-	/*start = clock();
-	char* result = extractFaceFeatureByFile(base_src);
-	std::cout << result << std::endl;
-	ends = clock();
-	std::cout << "register time:" << ends - start << "ms" << std::endl;*/
-
 	start = clock();
-	char* Base64_features = computeDistanceByFile(base_src,target_src);
-	std::cout << "result:" << Base64_features << std::endl;
+	//
 	ends = clock();
 	std::cout << "result time:" << ends - start << "ms" << std::endl;
 	
