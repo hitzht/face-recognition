@@ -9,19 +9,22 @@ email:jiaopaner@163.com
 /*
 	detected = 0:normal image file that includes faces
 	detected = 1:face image that only includes single face
+
+	type = 0:all faces
+	type = 1:max face
 */
 extern "C" {
 
 	LIB_API int loadModel(char* mtcnn_model, char* insightface_params, char * insightface_json);
 	
-	LIB_API char*  extractFaceFeatureByFile(char* src,int detected);
+	LIB_API char*  extractFaceFeatureByFile(char* src,int detected,int type);
 
-	LIB_API char*  extractFaceFeatureByByte(unsigned char* src, int width, int height, int channels, int detected);
+	LIB_API char*  extractFaceFeatureByByte(unsigned char* src, int width, int height, int channels, int detected,int type);
 
 	/*	
 		base64_data:"/9j/4AAQSkZJRgABAQE..."
 	*/
-	LIB_API char*  extractFaceFeatureByBase64(char* base64_data,int detected);
+	LIB_API char*  extractFaceFeatureByBase64(char* base64_data,int detected,int type);
 
 	/*
 		distance < 1:same person or not

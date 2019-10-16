@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
 	char* feature_model_params = "model/feature_model/128/model-0000.params";
 	char* feature_model_json = "model/feature_model/128/model-symbol.json";
 
-	if (std::string(argv[3]) == "512") {
+	if (std::string(argv[1]) == "512") {
 		feature_model_params = "model/feature_model/512/model-0000.params";
 		feature_model_json = "model/feature_model/512/model-symbol.json";
 		std::cout << "loading 512 model...." << std::endl;
@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
 	
 	int status = loadModel("model/mtcnn_model", feature_model_params, feature_model_json);
 
-	test(argv[1],argv[2]);
+	test(argv[2],argv[3]);
 
 
 	cv::waitKey();

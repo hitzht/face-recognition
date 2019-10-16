@@ -3,22 +3,20 @@ author:jiaopan
 date:2019-09-26
 email:jiaopaner@163.com
 */
-
 #include "face_recognize_api.h"
 #include <opencv2\opencv.hpp>
 #include "recognizer.hpp"
 #include "cJSON.h"
 #include "utils.hpp"
+
 #include <time.h>
 
-using namespace cv;
-
 Recognizer recognizer;
-char* extractFaceFeatureByImage(Mat image) {
+char* extractFaceFeatureByImage(cv::Mat image,int type) {
 	cJSON  *result = cJSON_CreateObject(), *embeddings = cJSON_CreateArray();
 	char *resultJson;
 	try {
-		std::vector<cv::Mat>  aligned_faces = recognizer.createAlignFace(image);
+		std::vector<cv::Mat>  aligned_faces = recognizer.createAlignFace(image,type);
 		if (aligned_faces.size() == 0) {
 			cJSON_AddNumberToObject(result, "status", -1);
 			cJSON_AddStringToObject(result, "msg", "there is no face");
@@ -55,7 +53,7 @@ char* extractFaceFeatureByImage(Mat image) {
 	}
 }
 
-char* extractFaceFeature(Mat &face) { 
+char* extractFaceFeature(cv::Mat &face) {
 	resize(face, face, cv::Size(112, 112));
 	cJSON  *result = cJSON_CreateObject(), *embeddings = cJSON_CreateArray();
 	char *resultJson;
@@ -95,7 +93,7 @@ char* extractFaceFeature(Mat &face) {
 		return resultJson;
 	}
 }
-char* computeDistanceByMat(Mat& base, Mat& target,int detected) {
+char* computeDistanceByMat(cv::Mat& base, cv::Mat& target,int detected) {
 	cJSON  *result = cJSON_CreateObject();
 	char *resultJson;
 	double distance;
@@ -110,19 +108,19 @@ char* computeDistanceByMat(Mat& base, Mat& target,int detected) {
 			distance = recognizer.distance(base_emb, target_emb);
 		}
 		else {*/
-			std::vector<cv::Mat> base_vector = recognizer.createAlignFace(base);
-			std::vector<cv::Mat> target_vector = recognizer.createAlignFace(target);
+			std::vector<cv::Mat> base_vector = recognizer.createAlignFace(base,1);
+			std::vector<cv::Mat> target_vector = recognizer.createAlignFace(target,1);
 
-			if ((base_vector.empty() || target_vector.empty()) || (base_vector.size() > 1 || target_vector.size() > 1)) {
+			if ((base_vector.empty() || target_vector.empty())) {
 				cJSON_AddNumberToObject(result, "status", -1);
-				cJSON_AddStringToObject(result, "msg", "compute failed,one of images has no face or has more than one face");
+				cJSON_AddStringToObject(result, "msg", "compute failed,one of images has no face");
 				cJSON_AddNumberToObject(result, "distance", -1);
 				cJSON_AddNumberToObject(result, "sim", 0);
 				resultJson = cJSON_PrintUnformatted(result);
 				return resultJson;
 			}
-			Mat base_emb = recognizer.extractFeature(base_vector[0]);
-			Mat target_emb = recognizer.extractFeature(target_vector[0]);
+			cv::Mat base_emb = recognizer.extractFeature(base_vector[0]);
+			cv::Mat target_emb = recognizer.extractFeature(target_vector[0]);
 			distance = recognizer.distance(base_emb, target_emb);
 			
 			cv::transpose(target_emb, target_emb);
@@ -150,7 +148,7 @@ char* computeDistanceByMat(Mat& base, Mat& target,int detected) {
 	}
 }
 
-Mat convertToMat(std::string str) {
+cv::Mat convertToMat(std::string str) {
 	std::vector<double> v;
 	std::stringstream ss(str);
 	ss << std::setprecision(16);
@@ -158,7 +156,7 @@ Mat convertToMat(std::string str) {
 	while (std::getline(ss, token, ',')) {
 		v.push_back(std::stod(token));
 	}
-	Mat output = cv::Mat(v, true).reshape(1, 1);
+	cv::Mat output = cv::Mat(v, true).reshape(1, 1);
 	return output;
 }
 
@@ -167,10 +165,10 @@ LIB_API int loadModel(char* mtcnn_model,char* insightface_params,char * insightf
 	return recognizer.loadModel(mtcnn_model, insightface_params, insightface_json);
 }
 
-LIB_API char * extractFaceFeatureByFile(char * src, int detected = 0){
+LIB_API char * extractFaceFeatureByFile(char * src, int detected = 0, int type = 0){
 	cJSON  *result = cJSON_CreateObject(), *embeddings = cJSON_CreateArray();
 	char *resultJson;
-	Mat image;
+	cv::Mat image;
 	try{
 		image = imread(src);
 	}
@@ -187,11 +185,11 @@ LIB_API char * extractFaceFeatureByFile(char * src, int detected = 0){
 //		return extractFaceFeature(image); // todo face aligned
 //	}
 //	else{
-		return extractFaceFeatureByImage(image);
+		return extractFaceFeatureByImage(image,type);
 //	}
 }
 
-LIB_API char * extractFaceFeatureByByte(unsigned char * src, int width, int height, int channels, int detected = 0){
+LIB_API char * extractFaceFeatureByByte(unsigned char * src, int width, int height, int channels, int detected = 0,int type = 0){
 	int format;
 	switch (channels) {
 	case 1:
@@ -207,20 +205,20 @@ LIB_API char * extractFaceFeatureByByte(unsigned char * src, int width, int heig
 		format = CV_8UC4;
 		break;
 	}
-	Mat image(height, width, format, src);
+	cv::Mat image(height, width, format, src);
 	//if (detected == 1) {
 	//	return extractFaceFeature(image);// todo face aligned
 	//}
 	//else {
-		return extractFaceFeatureByImage(image);
+		return extractFaceFeatureByImage(image,type);
 	//}
 }
 
-LIB_API char*  extractFaceFeatureByBase64(char* base64_data, int detected = 0) {
+LIB_API char*  extractFaceFeatureByBase64(char* base64_data, int detected = 0,int type = 0) {
 	std::string data(base64_data);
 	cJSON  *result = cJSON_CreateObject(), *embeddings = cJSON_CreateArray();
 	char *resultJson;
-	Mat image;
+	cv::Mat image;
 	try {
 		image = Utils::base64ToMat(data);
 	}
@@ -235,7 +233,7 @@ LIB_API char*  extractFaceFeatureByBase64(char* base64_data, int detected = 0) {
 	//	return extractFaceFeature(image);// todo face aligned
 	//}
 	//else {
-		return extractFaceFeatureByImage(image);
+		return extractFaceFeatureByImage(image,type);
 	//}
 }
 
@@ -245,7 +243,7 @@ LIB_API char * computeDistance(char * base_emb, char * target_emb){
 	char *resultJson;
 	try{
 		std::string base(base_emb), target(target_emb);
-		Mat baseMat = convertToMat(base), targetMat = convertToMat(target);
+		cv::Mat baseMat = convertToMat(base), targetMat = convertToMat(target);
 		double distance = recognizer.distance(baseMat, targetMat);
 		cv::transpose(targetMat, targetMat);
 		double sim = baseMat.dot(targetMat);
@@ -273,7 +271,7 @@ LIB_API char * computeDistance(char * base_emb, char * target_emb){
 LIB_API char * computeDistanceByFile(char * base_src, char * target_src, int detected = 0){
 	cJSON  *result = cJSON_CreateObject();
 	char *resultJson;
-	Mat base,target;
+	cv::Mat base,target;
 	try{
 		base = imread(base_src);
 		target = imread(target_src);
@@ -295,7 +293,7 @@ LIB_API char*  computeDistanceByBase64(char* base_data,char* target_data, int de
 	std::string target_str(target_data);
 	cJSON  *result = cJSON_CreateObject();
 	char *resultJson;
-	Mat base, target;
+	cv::Mat base, target;
 	try {
 		base = Utils::base64ToMat(base_str);
 		target = Utils::base64ToMat(target_str);
@@ -365,7 +363,7 @@ void test(char* base_src, char* target_src) {
 	
 	clock_t start, ends;
 	start = clock();
-	//
+	
 	ends = clock();
 	std::cout << "result time:" << ends - start << "ms" << std::endl;
 	

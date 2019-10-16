@@ -54,17 +54,29 @@ class Recognizer{
 				return 1;
 			return -1;
 		}
-		std::vector<cv::Mat> createAlignFace(cv::Mat& img) {
+		std::vector<cv::Mat> createAlignFace(cv::Mat& img,int type) {
 			std::vector<cv::Mat> aligned_faces;
 			if (img.empty())
 				return aligned_faces;
 			cv::Mat src(5, 2, CV_32FC1, norm_face);
 			std::vector<face_box> face_boxs;
 			mtcnn.Detect(img, face_boxs);
-			for (int i = 0; i < face_boxs.size(); i++) {
-				face_box face_box = face_boxs[i];
-				if (face_box.score * 100 < 90)
-					continue;
+			int index = 0;
+			float max_box = 0;
+
+			if (type == 1) {
+				for (int i = 0; i < face_boxs.size(); i++) {
+					face_box face_box = face_boxs[i];
+					float box = (face_box.x1 - face_box.x0 + face_box.y1 - face_box.y0) / 2;
+					if (box > max_box) {
+						max_box = box;
+						index = i;
+					}
+				}
+				face_box face_box = face_boxs[index];
+				//cv::rectangle(img, cv::Point(face_box.x0, face_box.y0), cv::Point(face_box.x1, face_box.y1), cv::Scalar(0, 255, 0), 2);
+				//cv::imshow("img",img);
+				//cv::waitKey(2000);
 				float landmark[5][2] = {
 					{ face_box.landmark.x[0] , face_box.landmark.y[0] },
 					{ face_box.landmark.x[1] , face_box.landmark.y[1] },
@@ -72,7 +84,7 @@ class Recognizer{
 					{ face_box.landmark.x[3] , face_box.landmark.y[3] },
 					{ face_box.landmark.x[4] , face_box.landmark.y[4] }
 				};
-					
+
 				cv::Mat dst(5, 2, CV_32FC1, landmark);
 				cv::Mat m = similarTransform(dst, src);
 				cv::Mat aligned(112, 112, CV_32FC3);
@@ -80,7 +92,28 @@ class Recognizer{
 				cv::Mat transfer = m(cv::Rect(0, 0, 3, 2));
 				cv::warpAffine(img, aligned, transfer, size, 1, 0, 0);
 				aligned_faces.push_back(aligned);
-			}		
+			}
+			else{
+				for (int i = 0; i < face_boxs.size(); i++) {
+					face_box face_box = face_boxs[i];
+					if (face_box.score * 100 < 70)
+						continue;
+					float landmark[5][2] = {
+						{ face_box.landmark.x[0] , face_box.landmark.y[0] },
+						{ face_box.landmark.x[1] , face_box.landmark.y[1] },
+						{ face_box.landmark.x[2] , face_box.landmark.y[2] },
+						{ face_box.landmark.x[3] , face_box.landmark.y[3] },
+						{ face_box.landmark.x[4] , face_box.landmark.y[4] }
+					};
+					cv::Mat dst(5, 2, CV_32FC1, landmark);
+					cv::Mat m = similarTransform(dst, src);
+					cv::Mat aligned(112, 112, CV_32FC3);
+					cv::Size size(112, 112);
+					cv::Mat transfer = m(cv::Rect(0, 0, 3, 2));
+					cv::warpAffine(img, aligned, transfer, size, 1, 0, 0);
+					aligned_faces.push_back(aligned);
+				}
+			}
 			return aligned_faces;
 		}
 		cv::Mat extractFeature(const cv::Mat& face){
