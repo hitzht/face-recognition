@@ -29,17 +29,41 @@ static int LoadFile(const std::string & fname, std::vector<char>& buf){
 
 int MxNetMtcnn::LoadModule(const std::string &proto_model_dir){
 	model_dir_ = proto_model_dir;
+	LoadModelFileToMem(proto_model_dir);
 
 	/* Load the network. */
 	RNet_ = LoadRNet(1);
-
 	if (RNet_ == nullptr)
 		return -1;
-
 	ONet_ = LoadONet(1);
-
 	if (ONet_ == nullptr)
 		return -1;
+
+	return 1;
+}
+
+int MxNetMtcnn::LoadModelFileToMem(const std::string & model_dir){
+	model_dir_ = model_dir;
+	std::string pnet_param_file = model_dir_ + "/det1-0001.params", rnet_param_file = model_dir_ + "/det2-0001.params", onet_param_file = model_dir_ + "/det3-0001.params";
+	std::string pnet_json_file = model_dir_ + "/det1-symbol.json", rnet_json_file = model_dir_ + "/det2-symbol.json", onet_json_file = model_dir_ + "/det3-symbol.json";
+	std::vector<char> pnet_param, rnet_param, onet_param;
+	std::vector<char> pnet_json, rnet_json, onet_json;
+
+	if (LoadFile(pnet_param_file, pnet_param) < 0 || LoadFile(rnet_param_file, rnet_param) < 0 || LoadFile(onet_param_file, onet_param) < 0)
+		return -1;
+	else{
+		param_buffer_map["pnet_param"] = pnet_param;
+		param_buffer_map["rnet_param"] = rnet_param;
+		param_buffer_map["onet_param"] = onet_param;
+	}
+
+	if (LoadFile(pnet_json_file, pnet_json) < 0 || LoadFile(rnet_json_file, rnet_json) < 0 || LoadFile(onet_json_file, onet_json) < 0)
+		return -1;
+	else{
+		json_buffer_map["pnet_json"] = pnet_json;
+		json_buffer_map["rnet_json"] = rnet_json;
+		json_buffer_map["onet_json"] = onet_json;
+	}
 
 	return 1;
 }
@@ -55,12 +79,58 @@ MxNetMtcnn::~MxNetMtcnn(void){
 			MXPredFree(PNet);
 		}
 	}
-
 }
 
-void MxNetMtcnn::LoadPNet(int h, int w){
-	std::string param_file = model_dir_ + "/det1-0001.params";
-	std::string json_file = model_dir_ + "/det1-symbol.json";
+PredictorHandle MxNetMtcnn::LoadPNet(int h, int w){
+	return LoadMxNetModuleByMem(param_buffer_map["pnet_param"], json_buffer_map["pnet_json"], 1, 3, h, w);
+}
+
+PredictorHandle MxNetMtcnn::LoadRNet(int batch) {
+	/*std::string param_file = model_dir_ + "/det2-0001.params";
+	std::string json_file = model_dir_ + "/det2-symbol.json";
+	return LoadMxNetModule(param_file, json_file, batch, 3, 24, 24);*/
+	return LoadMxNetModuleByMem(param_buffer_map["rnet_param"], json_buffer_map["rnet_json"], batch,3,24,24);
+}
+
+
+PredictorHandle MxNetMtcnn::LoadONet(int batch) {
+	/*std::string param_file = model_dir_ + "/det3-0001.params";
+	std::string json_file = model_dir_ + "/det3-symbol.json";
+	return LoadMxNetModule(param_file, json_file, batch, 3, 48, 48);*/
+	return LoadMxNetModuleByMem(param_buffer_map["onet_param"], json_buffer_map["onet_json"], batch, 3, 48, 48);
+}
+
+PredictorHandle MxNetMtcnn::LoadMxNetModuleByMem(const std::vector<char>& param_buffer, const std::vector<char>& json_buffer, int batch, int channel, int input_h, int input_w){
+	int64 start = cv::getTickCount();
+	PredictorHandle pred_hnd;
+
+	int device_type = 1;
+	int dev_id = 0;
+	mx_uint  num_input_nodes = 1;
+	const char * input_keys[1];
+	const mx_uint input_shape_indptr[] = { 0, 4 };
+	const mx_uint input_shape_data[] = {
+		static_cast<mx_uint>(batch),
+		static_cast<mx_uint>(channel),
+		static_cast<mx_uint>(input_h),
+		static_cast<mx_uint>(input_w)
+	};
+
+	input_keys[0] = "data";
+
+	MXPredCreate(json_buffer.data(),
+		param_buffer.data(),
+		param_buffer.size(),
+		device_type,
+		dev_id,
+		num_input_nodes,
+		input_keys,
+		input_shape_indptr,
+		input_shape_data,
+		&pred_hnd
+	);
+
+	return pred_hnd;
 }
 
 PredictorHandle MxNetMtcnn::LoadMxNetModule(const std::string& param_file, const std::string& json_file,int batch, int channel, int input_h, int input_w){
@@ -104,6 +174,7 @@ PredictorHandle MxNetMtcnn::LoadMxNetModule(const std::string& param_file, const
 	return pred_hnd;
 }
 
+
 void MxNetMtcnn::clearPredictVec(){
 	if (!PredictVec.empty()){
 		for (int i = 0; i<PredictVec.size(); i++)
@@ -130,14 +201,15 @@ void MxNetMtcnn::Detect(cv::Mat& orig_img, std::vector<face_box>& face_list){
 	cal_pyramid_list(img_h, img_w, min_size_, factor_, win_list);
 
 	if (img_h != pnet_h || img_w != pnet_w){
-		std::cout << "reload pNet as img shape change..." << std::endl;
+		//std::cout << "reload pNet as img shape change..." << std::endl;
 		clearPredictVec();
 		PredictVec.clear();
-		for (int i = 0; i<win_list.size(); i++){
-			std::string param_file = model_dir_ + "/det1-0001.params";
+		for (int i = 0; i < win_list.size(); i++){
+			/*std::string param_file = model_dir_ + "/det1-0001.params";
 			std::string json_file = model_dir_ + "/det1-symbol.json";
 
-			PredictorHandle pred = LoadMxNetModule(param_file, json_file, 1, 3, win_list[i].h, win_list[i].w);
+			PredictorHandle pred = LoadMxNetModule(param_file, json_file, 1, 3, win_list[i].h, win_list[i].w);*/
+			PredictorHandle pred = LoadPNet(win_list[i].h, win_list[i].w);
 			PredictVec.push_back(pred);
 		}
 		pnet_h = img_h;
@@ -264,21 +336,6 @@ void MxNetMtcnn::CopyOnePatch(const cv::Mat& img, face_box&input_box, float * da
 	cv::resize(chop_img, chop_img, cv::Size(width, height), 0, 0, cv::INTER_LINEAR);
 
 	cv::split(chop_img, channels);
-}
-
-PredictorHandle MxNetMtcnn::LoadRNet(int batch){
-	std::string param_file = model_dir_ + "/det2-0001.params";
-	std::string json_file = model_dir_ + "/det2-symbol.json";
-
-	return LoadMxNetModule(param_file, json_file, batch, 3, 24, 24);
-}
-
-
-PredictorHandle MxNetMtcnn::LoadONet(int batch){
-	std::string param_file = model_dir_ + "/det3-0001.params";
-	std::string json_file = model_dir_ + "/det3-symbol.json";
-
-	return LoadMxNetModule(param_file, json_file, batch, 3, 48, 48);
 }
 
 void MxNetMtcnn::RunRNet(const cv::Mat& img, std::vector<face_box>& pnet_boxes, std::vector<face_box>& output_boxes){

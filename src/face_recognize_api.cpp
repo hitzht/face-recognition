@@ -162,6 +162,7 @@ cv::Mat convertToMat(std::string str) {
 
 /*---------------------------------------api list -----------------------------------------------------------------*/
 LIB_API int loadModel(char* mtcnn_model,char* insightface_params,char * insightface_json) {
+	std::cout << "loading model..." << std::endl;
 	return recognizer.loadModel(mtcnn_model, insightface_params, insightface_json);
 }
 
@@ -363,7 +364,8 @@ void test(char* base_src, char* target_src) {
 	
 	clock_t start, ends;
 	start = clock();
-	
+	char* result = computeDistanceByFile(base_src,target_src,1);
+	std::cout << result << std::endl;
 	ends = clock();
 	std::cout << "result time:" << ends - start << "ms" << std::endl;
 	
