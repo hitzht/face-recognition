@@ -78,6 +78,7 @@ class Recognizer{
 					//cv::rectangle(img, cv::Point(face_box.x0, face_box.y0), cv::Point(face_box.x1, face_box.y1), cv::Scalar(0, 255, 0), 2);
 					//cv::imshow("img",img);
 					//cv::waitKey(2000);
+
 					float landmark[5][2] = {
 						{ face_box.landmark.x[0] , face_box.landmark.y[0] },
 						{ face_box.landmark.x[1] , face_box.landmark.y[1] },
